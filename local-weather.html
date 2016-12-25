@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Random Quote Machine</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.9/css/weather-icons.css">
+
+	<style>
+	body{
+		-webkit-transition: background-color 2s; /* Safari */
+    transition: background-color 2s;
+	}
+	</style>
+
+</head>
+<body class="blue-grey lighten-5">
+	<nav class="blue-grey darken-4">
+		<a href="#" class="brand-logo">Local WeaterApp</a>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col s12 center">
+				<h1 ><span id="city-label"></span>, <span id="country-label"></span></h1>
+				<h2 class="thin"><span id="temp-label"></span> <a href="#" id="units-label"></a></h2>
+				<h2 class="thin" id="weather-label"></h2>
+				<h2><i id="icon-label" class=""></i></h2>
+				<p>By Fega</p>
+				<p >This project uses MaterializeCSS to get a material design style, Axios to Make http request,the openweathermap and ipinfo APIs and erikflowers.github.io/weather-icons/  </p>
+			</div>
+		</div>
+	</div>
+	<script>
+	let city;//city name
+	let country;//country code
+	let cityQuery;//code to perform the query
+	let apikey;//api key to perform the query
+	let f;//temp in f
+	let c;//temp in c
+	let weather;//type of weather
+	let weatherDescription;//type of weather
+
+		function getCity(){
+			axios.get("http://ipinfo.io/json")
+			.then(res=>{
+				city=res.data.city;
+				country=res.data.country
+				document.getElementById("city-label").textContent=city;
+				document.getElementById("country-label").textContent=country;
+				cityQuery = `${city},${country}`;
+			}).then(getWeather)
+		}
+		function getWeather(){
+			axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&units=metric&APPID=c28f9d7dc35993d65bb3425caf6f0a16&callback=JSON_CALLBACK"`)
+			.then(res=>{
+				res.data= JSON.parse(res.data.replace("JSON_CALLBACK","").replace('"(',"").replace(");",""))
+				console.log(res.data.weather[0])
+				c=res.data.main.temp;
+				f=c*1.8+32;
+				weather=res.data.weather[0].main;
+				weatherDescription=res.data.weather[0].description;
+
+				document.getElementById("temp-label").textContent=c;
+				document.getElementById("units-label").textContent="°C";
+				document.getElementById("weather-label").textContent=weatherDescription;
+				setIcon(weather);
+				console.log(weather)
+			})
+		}
+		function setIcon(icon){
+			var res;
+			var color;
+			switch (icon) {
+	          case 'Dizzle':
+	            res="wi wi-day-lightning  teal-text text-darken-4";
+							color="teal lighten-3"
+	            break;
+	          case 'Clouds':
+	            res="wi wi-cloudy indigo-text text-darken-4";
+							color=" indigo lighten-3"
+	            break;
+	          case 'Rain':
+	            res="wi wi-hail blue-grey-text text-darken-4";
+							color=" blue-grey lighten-3"
+	            break;
+	          case 'Snow':
+	            res="wi wi-snow";
+							color="white"
+	            break;
+	          case 'Clear':
+	            res="wi wi-day-sunny yellow-text text-darken-4";
+							color="cyan lighten-4"
+	            break;
+	          case 'Thunderstom':
+	            res="wi wi-thunderstorm deep-purple-text text-darken-4";
+							color="indigo lighten-3"
+	            break;
+	        }
+	        document.getElementById("icon-label").className = "";
+	        document.getElementById("icon-label").className = res;
+					document.getElementsByTagName("body")[0].className = color;
+		}
+		function toggleUnits(){
+			if (document.getElementById("units-label").textContent==="°C"){
+				document.getElementById("units-label").textContent="°F"
+				document.getElementById("temp-label").textContent=f;
+			}else{
+				document.getElementById("temp-label").textContent=c;
+				document.getElementById("units-label").textContent="°C"
+			}
+		}
+		document.getElementById("units-label").addEventListener("click", toggleUnits);
+		getCity();
+	</script>
+</body>
+</html>

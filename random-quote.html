@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Random Quote Machine</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<style>	
+		blockquote {
+	    	margin: 0;
+	    	padding-left: 0;
+	    	border-left: 0;
+		}
+		.author-text{
+			text-align: right; 
+		}
+		.quote-box{
+			padding-top: 10px	!important;
+			padding-bottom: 10px!important;
+			padding-left: 30px	!important;
+			padding-right: 30px	!important;
+		}
+
+	</style>
+
+</head>
+<body class="pink darken-2">
+	<nav class="pink darken-4">
+		<a href="#" class="brand-logo">Random Quote Machine</a>
+	</nav>
+	<br>
+	<br>
+	<div class="container">
+		<div class="row">
+			<div class="col s12 m8 l8 offset-m2 offset-l2 white quote-box card-panel">
+				<blockquote class="flow-text" id="quote-text">	Loading your Quote.</blockquote>
+				<p class="author-text" id="author-text"></p>
+				<div class="divider"></div>
+				<div class="row">
+				<br>	
+					<div class="col s12 right-align">	
+						<a href="#" id="btn-tweet" class="btn-flat pink-text text-darken-4 hide">Tweet it!</a>
+						<a id="btn-get-quote" href="#" class="btn pink darken-4 hide">New Quote</a>
+					</div>
+				</div>
+				
+			</div>
+			<div class="row">
+				<div class="col s12 m8 l8 offset-m2 offset-l2">
+					<p class="white-text center">By Fega</p>
+					<p class="white-text">This project uses MaterializeCSS to get a material design style, Axios to Make http request and the forismatic API to get the quotes</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	'use strict'
+	
+	document.getElementById("btn-get-quote").addEventListener("click", getQuote);
+
+	function getQuote(){
+		axios({
+ 			method: 'get',
+  			url: "https://crossorigin.me/http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=jsonp&lang=en",
+  		}).then(res=>{
+			console.log(res)
+			var quote=res.quoteText;
+			var author=res.quoteAuthor;
+			document.getElementById("author-text").textContent=`- ${author}`;
+			document.getElementById("quote-text").textContent=quote;
+
+			document.getElementById("btn-get-quote").className = "";
+			document.getElementById("btn-get-quote").className = "btn pink darken-4";
+
+			document.getElementById("btn-tweet").className = "";
+			document.getElementById("btn-tweet").className = "btn-flat pink-text text-darken-4";
+
+			document.getElementById("btn-tweet").setAttribute("href", `https://twitter.com/intent/tweet?hashtags=quotes&related=imfega&text="${quote}" ${author}`);
+		})
+	}
+	getQuote();
+	</script>
+</body>
+</html>
