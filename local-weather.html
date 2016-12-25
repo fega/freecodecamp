@@ -29,6 +29,7 @@
 				<h2><i id="icon-label" class=""></i></h2>
 				<p>By Fega</p>
 				<p >This project uses MaterializeCSS to get a material design style, Axios to Make http request,the openweathermap and ipinfo APIs and erikflowers.github.io/weather-icons/  </p>
+				<p>Sadly, openweathermap only works in non secure http environment.</p>
 			</div>
 		</div>
 	</div>
@@ -43,7 +44,7 @@
 	let weatherDescription;//type of weather
 
 		function getCity(){
-			axios.get("http://ipinfo.io/json")
+			axios.get("https://ipinfo.io/json")
 			.then(res=>{
 				city=res.data.city;
 				country=res.data.country
@@ -53,7 +54,7 @@
 			}).then(getWeather)
 		}
 		function getWeather(){
-			axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&units=metric&APPID=c28f9d7dc35993d65bb3425caf6f0a16&callback=JSON_CALLBACK"`)
+			axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&units=metric&APPID=c28f9d7dc35993d65bb3425caf6f0a16&callback=JSON_CALLBACK"`)
 			.then(res=>{
 				res.data= JSON.parse(res.data.replace("JSON_CALLBACK","").replace('"(',"").replace(");",""))
 				console.log(res.data.weather[0])
